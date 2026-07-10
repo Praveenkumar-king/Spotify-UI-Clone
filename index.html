@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Spotify UI Clone - Web Player. Listen to featured playlists, albums, and artists.">
+  <title>Spotify - Web Player: Music for everyone</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- ==========================================
+         1. Left Sidebar Navigation Panel
+         ========================================== -->
+    <aside class="sidebar">
+      
+      <!-- Logo and Main Navigation -->
+      <div class="sidebar-panel">
+        <a href="index.html" class="sidebar-logo">
+          <img src="assets/images/logo.png" alt="Spotify Logo">
+          <span>Spotify</span>
+        </a>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item active">
+            <a href="index.html">
+              <i class="fa-solid fa-house"></i>
+              <span>Home</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="search.html">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span>Search</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Library Playlist Scroll List -->
+      <div class="sidebar-panel library-panel">
+        <div class="library-header">
+          <div class="library-title" onclick="window.location.href='library.html'">
+            <i class="fa-solid fa-lines-lean"></i>
+            <span>Your Library</span>
+          </div>
+          <button class="control-btn" style="width:24px; height:24px;" onclick="showToast('Create Playlist clicked')">
+            <i class="fa-solid fa-plus" style="font-size:12px;"></i>
+          </button>
+        </div>
+        
+        <!-- List of Playlists (Loaded dynamically by app.js) -->
+        <div class="library-scroll" id="library-playlists">
+          <!-- Library playlists injected here -->
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ==========================================
+         2. Main Application Views Section
+         ========================================== -->
+    <main class="main-view fade-in-up">
+      
+      <!-- Top Sticky Navigation Bar -->
+      <header class="top-bar">
+        <div class="nav-controls">
+          <button class="control-btn" id="nav-back"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="control-btn disabled" id="nav-forward"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <div style="display:flex; gap:16px; align-items:center;">
+          <button class="badge badge-dark" onclick="window.location.href='premium.html'">Explore Premium</button>
+          
+          <!-- User Profile Dropdown -->
+          <div class="user-menu" id="user-menu-trigger">
+            <img src="assets/artists/taylor_swift.jpg" class="user-avatar" alt="Avatar">
+            <span class="user-name">Praveen Kumar</span>
+            <i class="fa-solid fa-caret-down" style="font-size:10px;"></i>
+            
+            <!-- User drop menu -->
+            <div class="me-dropdown" id="user-dropdown-menu" style="position: absolute; top: 36px; right: 0; width: 180px; background-color: var(--spotify-card); border-radius: 4px; display: none; flex-direction: column; z-index: 1000; padding: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+              <a href="profile.html" style="padding: 10px 12px; font-size:13px; font-weight:600; border-radius:3px;" class="sidebar-nav-item" onclick="showToast('Profile clicked')">Profile</a>
+              <a href="#" style="padding: 10px 12px; font-size:13px; font-weight:600; border-radius:3px;" class="sidebar-nav-item" onclick="showToast('Settings clicked')">Settings</a>
+              <hr style="border:none; border-bottom:1px solid rgba(255,255,255,0.05); margin:4px 0;">
+              <a href="#" style="padding: 10px 12px; font-size:13px; font-weight:600; border-radius:3px;" class="sidebar-nav-item" onclick="showToast('Signed out')">Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Home Music Feed -->
+      <div style="flex-grow:1; overflow-y:auto; padding-bottom:32px;">
+        
+        <!-- Featured Playlists Grid -->
+        <section class="section-container">
+          <div class="section-header">
+            <h2 class="section-title">Spotify Playlists</h2>
+            <a href="library.html" class="see-all-link">See all</a>
+          </div>
+          <div class="cards-grid" id="playlists-grid">
+            <!-- Loaded dynamically below -->
+          </div>
+        </section>
+
+        <!-- Popular Artists Section -->
+        <section class="section-container">
+          <div class="section-header">
+            <h2 class="section-title">Popular Artists</h2>
+            <a href="#" class="see-all-link" onclick="showToast('Explore all artists')">See all</a>
+          </div>
+          <div class="cards-grid" id="artists-grid">
+            <!-- Loaded dynamically below -->
+          </div>
+        </section>
+
+        <!-- Trending Albums Section -->
+        <section class="section-container">
+          <div class="section-header">
+            <h2 class="section-title">Popular Albums</h2>
+            <a href="#" class="see-all-link" onclick="showToast('Explore all albums')">See all</a>
+          </div>
+          <div class="cards-grid" id="albums-grid">
+            <!-- Loaded dynamically below -->
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ==========================================
+       3. Mobile Sticky Bottom Navigation
+       ========================================== -->
+  <nav class="mobile-nav-bar">
+    <a href="index.html" class="mobile-nav-item active">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="search.html" class="mobile-nav-item">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Search</span>
+    </a>
+    <a href="library.html" class="mobile-nav-item">
+      <i class="fa-solid fa-lines-lean"></i>
+      <span>Your Library</span>
+    </a>
+  </nav>
+
+  <!-- ==========================================
+       4. Bottom Fixed Music Player Control Bar
+       ========================================== -->
+  <footer class="player-bar">
+    
+    <!-- Left: Song details -->
+    <div class="player-left">
+      <img src="assets/albums/after_hours.jpg" class="player-album-art" id="player-art" alt="">
+      <div class="player-track-info">
+        <span class="player-track-title" id="player-title" onclick="viewAlbum('After Hours')">Blinding Lights</span>
+        <span class="player-track-artist" id="player-artist">The Weeknd</span>
+      </div>
+      <button class="player-like-btn" id="player-like"><i class="fa-regular fa-heart"></i></button>
+    </div>
+
+    <!-- Center: Playback control buttons -->
+    <div class="player-center">
+      <div class="playback-controls">
+        <button class="btn-icon" id="player-shuffle"><i class="fa-solid fa-shuffle"></i></button>
+        <button class="btn-icon" id="player-prev"><i class="fa-solid fa-backward-step"></i></button>
+        <button class="btn-play-pause" id="player-play-pause"><i class="fa-solid fa-play"></i></button>
+        <button class="btn-icon btn-next-mobile" id="player-next"><i class="fa-solid fa-forward-step"></i></button>
+        <button class="btn-icon" id="player-repeat"><i class="fa-solid fa-repeat"></i></button>
+      </div>
+      <div class="progress-container">
+        <span class="time-stamp" id="player-current-time">0:00</span>
+        <div class="progress-bar-wrapper" id="player-seek-bar">
+          <div class="progress-bar-fill" id="player-progress-fill">
+            <div class="progress-handle"></div>
+          </div>
+        </div>
+        <span class="time-stamp" id="player-duration-total">3:20</span>
+      </div>
+    </div>
+
+    <!-- Right: Utility sliders -->
+    <div class="player-right">
+      <button class="btn-icon" onclick="showToast('Open lyrics panel')"><i class="fa-solid fa-microphone-lines"></i></button>
+      <button class="btn-icon" onclick="showToast('Show music queue')"><i class="fa-solid fa-list-ul"></i></button>
+      <button class="btn-icon" onclick="showToast('Connect to a device')"><i class="fa-solid fa-computer-speaker"></i></button>
+      <div class="volume-container">
+        <button class="btn-icon" id="player-volume-icon"><i class="fa-solid fa-volume-high"></i></button>
+        <div class="volume-bar-wrapper" id="player-volume-bar">
+          <div class="volume-bar-fill" id="player-volume-fill">
+            <div class="progress-handle"></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-icon" onclick="showToast('Toggle full screen player')"><i class="fa-solid fa-maximize"></i></button>
+    </div>
+
+  </footer>
+
+  <!-- JavaScript Imports -->
+  <script src="js/app.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/navigation.js"></script>
+  <script>
+    // Dynamically render Home Music Grids
+    document.addEventListener("DOMContentLoaded", () => {
+      // Playlists card render
+      const plGrid = document.getElementById("playlists-grid");
+      if (plGrid) {
+        plGrid.innerHTML = SPOTIFY_DB.playlists.map(pl => `
+          <div class="music-card" onclick="viewPlaylist(${pl.id})">
+            <div class="card-img-wrapper">
+              <img src="${pl.art}" class="card-img" alt="">
+              <button class="card-play-btn" onclick="event.stopPropagation(); playTrack(${pl.tracks[0]})">
+                <i class="fa-solid fa-play"></i>
+              </button>
+            </div>
+            <span class="card-title">${pl.name}</span>
+            <p class="card-desc">${pl.desc}</p>
+          </div>
+        `).join('');
+      }
+
+      // Artists card render
+      const artGrid = document.getElementById("artists-grid");
+      if (artGrid) {
+        artGrid.innerHTML = SPOTIFY_DB.artists.map(art => `
+          <div class="music-card artist-card" onclick="viewArtist(${art.id})">
+            <div class="card-img-wrapper">
+              <img src="${art.avatar}" class="card-img" alt="">
+              <button class="card-play-btn" onclick="event.stopPropagation(); playTrack(${art.popularTracks[0]})">
+                <i class="fa-solid fa-play"></i>
+              </button>
+            </div>
+            <span class="card-title">${art.name}</span>
+            <p class="card-desc">Artist</p>
+          </div>
+        `).join('');
+      }
+
+      // Albums card render
+      const albGrid = document.getElementById("albums-grid");
+      if (albGrid) {
+        // Group tracks by album
+        const albums = {};
+        SPOTIFY_DB.tracks.forEach(track => {
+          if (!albums[track.album]) {
+            albums[track.album] = {
+              name: track.album,
+              artist: track.artist,
+              art: track.art,
+              trackId: track.id
+            };
+          }
+        });
+        
+        albGrid.innerHTML = Object.values(albums).map(alb => `
+          <div class="music-card" onclick="viewAlbum('${alb.name}')">
+            <div class="card-img-wrapper">
+              <img src="${alb.art}" class="card-img" alt="">
+              <button class="card-play-btn" onclick="event.stopPropagation(); playTrack(${alb.trackId})">
+                <i class="fa-solid fa-play"></i>
+              </button>
+            </div>
+            <span class="card-title">${alb.name}</span>
+            <p class="card-desc">${alb.artist}</p>
+          </div>
+        `).join('');
+      }
+    });
+  </script>
+</body>
+</html>

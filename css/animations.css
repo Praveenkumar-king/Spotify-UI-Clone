@@ -1,0 +1,101 @@
+/* animations.css - Spotify UI Clone Transition Effects & Animations */
+
+/* ==========================================
+   1. Skeleton loader pulsing
+   ========================================== */
+@keyframes pulse {
+  0% {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+  100% {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.skeleton {
+  animation: pulse 1.5s infinite ease-in-out;
+  border-radius: 4px;
+}
+
+.skeleton-card {
+  background-color: var(--spotify-card);
+  padding: 16px;
+  border-radius: 8px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-art {
+  width: 100%;
+  padding-top: 100%;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+
+.skeleton-title {
+  height: 16px;
+  width: 70%;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.skeleton-text {
+  height: 12px;
+  width: 90%;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================
+   2. Page Fade-In Effects
+   ========================================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Delay modifiers for stagger load */
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+
+/* ==========================================
+   3. Song playing equalizer animation (for active playing track)
+   ========================================== */
+.equalizer-bar {
+  display: inline-block;
+  width: 3px;
+  background-color: var(--spotify-green);
+  margin-right: 2px;
+  animation: bounce 0.8s infinite alternate;
+}
+
+@keyframes bounce {
+  10% {
+    height: 4px;
+  }
+  50% {
+    height: 16px;
+  }
+  100% {
+    height: 8px;
+  }
+}
+
+.eq-1 { animation-delay: 0.1s; }
+.eq-2 { animation-delay: 0.3s; }
+.eq-3 { animation-delay: 0.6s; }
+.eq-4 { animation-delay: 0.2s; }

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Spotify UI Clone - Explore Premium subscription plans.">
+  <title>Spotify - Premium</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    /* Premium Page Unique Custom CSS */
+    .premium-hero {
+      background: linear-gradient(135deg, #1e3264 0%, #a0c3d2 100%);
+      padding: 64px 32px;
+      border-radius: 8px;
+      margin: 16px 32px 32px 32px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .premium-hero::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(29, 185, 84, 0.4) 0%, rgba(29, 185, 84, 0) 70%);
+      filter: blur(40px);
+    }
+    
+    .premium-hero-title {
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      max-width: 600px;
+    }
+    
+    .premium-hero-desc {
+      font-size: 18px;
+      font-weight: 500;
+      max-width: 500px;
+      color: var(--spotify-white);
+      opacity: 0.9;
+    }
+    
+    .premium-features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      padding: 0 32px 48px 32px;
+    }
+    
+    .feature-card {
+      background-color: var(--spotify-card);
+      padding: 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-4px);
+      background-color: var(--spotify-card-hover);
+    }
+    
+    .feature-icon {
+      font-size: 36px;
+      color: var(--spotify-green);
+    }
+    
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    .feature-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    
+    .plans-container {
+      padding: 0 32px 64px 32px;
+    }
+    
+    .plans-title {
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+    
+    .plans-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+    
+    .plan-card {
+      background-color: var(--spotify-card);
+      border-radius: 8px;
+      border: 1px solid var(--border-light);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      min-height: 480px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+    }
+    
+    .plan-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .plan-card.popular {
+      border-color: var(--spotify-green);
+    }
+    
+    .popular-badge {
+      background-color: var(--spotify-green);
+      color: var(--spotify-black);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 4px;
+      position: absolute;
+      top: -12px;
+      left: 24px;
+      text-transform: uppercase;
+    }
+    
+    .plan-header {
+      margin-bottom: 20px;
+    }
+    
+    .plan-name {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    
+    .plan-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--spotify-white);
+    }
+    
+    .plan-duration {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+      font-size: 13px;
+      flex-grow: 1;
+    }
+    
+    .plan-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.4;
+    }
+    
+    .plan-features i {
+      color: var(--spotify-green);
+      font-size: 14px;
+      margin-top: 2px;
+    }
+    
+    .plan-btn {
+      width: 100%;
+      background-color: var(--spotify-green);
+      color: var(--spotify-black);
+      border-radius: 500px;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      transition: background-color 0.2s, transform 0.2s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    
+    .plan-btn:hover {
+      background-color: var(--spotify-green-hover);
+      transform: scale(1.03);
+    }
+    
+    .plan-btn-outline {
+      background-color: transparent;
+      color: var(--spotify-white);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    
+    .plan-btn-outline:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: var(--spotify-white);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- ==========================================
+         1. Left Sidebar Navigation Panel
+         ========================================== -->
+    <aside class="sidebar">
+      
+      <div class="sidebar-panel">
+        <a href="index.html" class="sidebar-logo">
+          <img src="assets/images/logo.png" alt="Spotify Logo">
+          <span>Spotify</span>
+        </a>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="index.html">
+              <i class="fa-solid fa-house"></i>
+              <span>Home</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="search.html">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span>Search</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-panel library-panel">
+        <div class="library-header">
+          <div class="library-title" onclick="window.location.href='library.html'">
+            <i class="fa-solid fa-lines-lean"></i>
+            <span>Your Library</span>
+          </div>
+          <button class="control-btn" style="width:24px; height:24px;" onclick="showToast('Create Playlist clicked')">
+            <i class="fa-solid fa-plus" style="font-size:12px;"></i>
+          </button>
+        </div>
+        <div class="library-scroll" id="library-playlists">
+          <!-- Library items loaded dynamically -->
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ==========================================
+         2. Main Application View Section
+         ========================================== -->
+    <main class="main-view fade-in-up">
+      
+      <!-- Top Sticky Navigation Bar -->
+      <header class="top-bar">
+        <div class="nav-controls">
+          <button class="control-btn" id="nav-back"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="control-btn disabled" id="nav-forward"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <div>
+          <!-- User Menu Dropdown -->
+          <div class="user-menu" id="user-menu-trigger">
+            <img src="assets/artists/taylor_swift.jpg" class="user-avatar" alt="Avatar">
+            <span class="user-name">Praveen Kumar</span>
+            <i class="fa-solid fa-caret-down" style="font-size:10px;"></i>
+            
+            <div class="me-dropdown" id="user-dropdown-menu" style="position: absolute; top: 36px; right: 0; width: 180px; background-color: var(--spotify-card); border-radius: 4px; display: none; flex-direction: column; z-index: 1000; padding: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+              <a href="#" style="padding: 10px 12px; font-size:13px; font-weight:600; border-radius:3px;" class="sidebar-nav-item" onclick="showToast('Profile clicked')">Profile</a>
+              <a href="#" style="padding: 10px 12px; font-size:13px; font-weight:600; border-radius:3px;" class="sidebar-nav-item" onclick="showToast('Settings clicked')">Settings</a>
+              <hr style="border:none; border-bottom:1px solid rgba(255,255,255,0.05); margin:4px 0;">
+              <a href="index.html" style="padding: 10px 12px; font-size:13px; font-weight:600; border-radius:3px;" class="sidebar-nav-item">Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Premium view -->
+      <div style="flex-grow:1; overflow-y:auto;">
+        
+        <!-- Large Premium Hero Card Banner -->
+        <div class="premium-hero">
+          <div style="font-size:12px; font-weight:800; background-color:#1db954; color:#000000; width:fit-content; padding:4px 8px; border-radius:4px; text-transform:uppercase;">Limited Time Offer</div>
+          <h1 class="premium-hero-title">Get 3 months of Premium for free</h1>
+          <p class="premium-hero-desc">Enjoy ad-free music listening, offline playback, and unlimited skips. Only ₹119/month after. Cancel anytime.</p>
+          <div style="display:flex; gap:16px; margin-top:8px;">
+            <button class="plan-btn" style="width:auto;" onclick="checkoutPremium('3 Months Free Trial')">Get 3 Months Free</button>
+            <button class="plan-btn plan-btn-outline" style="width:auto;" onclick="document.getElementById('plans-anchor').scrollIntoView({behavior:'smooth'})">View All Plans</button>
+          </div>
+          <span style="font-size:11px; color:rgba(255,255,255,0.7); margin-top:8px;">Individual plan only. Terms and conditions apply. Open only to users who haven't tried Premium.</span>
+        </div>
+
+        <!-- Premium benefits features grid -->
+        <section class="section-container">
+          <h2 class="section-title" style="text-align:center; margin-bottom:32px; font-size:28px;">Why join Spotify Premium?</h2>
+          <div class="premium-features-grid">
+            <div class="feature-card">
+              <i class="fa-solid fa-ban feature-icon"></i>
+              <span class="feature-title">Ad-free music</span>
+              <p class="feature-desc">Listen to music without commercial breaks or unwanted audio ads.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fa-solid fa-circle-down feature-icon"></i>
+              <span class="feature-title">Offline playback</span>
+              <p class="feature-desc">Download tracks directly to your library and listen anywhere without data connection.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fa-solid fa-shuffle feature-icon"></i>
+              <span class="feature-title">Play in any order</span>
+              <p class="feature-desc">Choose any song, album, or playlist to stream with zero shuffle restrictions.</p>
+            </div>
+            <div class="feature-card">
+              <i class="fa-solid fa-headphones feature-icon"></i>
+              <span class="feature-title">High audio quality</span>
+              <p class="feature-desc">Experience 320kbps high-fidelity audio streams for immersive clarity.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Plans container cards -->
+        <section class="plans-container" id="plans-anchor">
+          <h2 class="plans-title">Choose your Premium</h2>
+          <p class="plans-subtitle">Listen without limits on your phone, speaker, tablet, and other devices.</p>
+          
+          <div class="plans-grid">
+            
+            <!-- Plan Card 1 -->
+            <div class="plan-card popular">
+              <div class="popular-badge">Best Value</div>
+              <div class="plan-header">
+                <h3 class="plan-name">Premium Individual</h3>
+                <span class="plan-price">₹119</span>
+                <span class="plan-duration">/ month</span>
+              </div>
+              <ul class="plan-features">
+                <li><i class="fa-solid fa-check"></i> 1 Premium account</li>
+                <li><i class="fa-solid fa-check"></i> Listen ad-free</li>
+                <li><i class="fa-solid fa-check"></i> Download to listen offline</li>
+                <li><i class="fa-solid fa-check"></i> Play songs in any order</li>
+                <li><i class="fa-solid fa-check"></i> High audio quality</li>
+              </ul>
+              <button class="plan-btn" onclick="checkoutPremium('Individual')">Get Started</button>
+            </div>
+
+            <!-- Plan Card 2 -->
+            <div class="plan-card">
+              <div class="plan-header">
+                <h3 class="plan-name">Premium Duo</h3>
+                <span class="plan-price">₹149</span>
+                <span class="plan-duration">/ month</span>
+              </div>
+              <ul class="plan-features">
+                <li><i class="fa-solid fa-check"></i> 2 Premium accounts</li>
+                <li><i class="fa-solid fa-check"></i> Ideal for couples or roommates</li>
+                <li><i class="fa-solid fa-check"></i> Ad-free music listening</li>
+                <li><i class="fa-solid fa-check"></i> Individual playlists and library</li>
+                <li><i class="fa-solid fa-check"></i> Offline downloads</li>
+              </ul>
+              <button class="plan-btn" onclick="checkoutPremium('Duo')">Get Started</button>
+            </div>
+
+            <!-- Plan Card 3 -->
+            <div class="plan-card">
+              <div class="plan-header">
+                <h3 class="plan-name">Premium Family</h3>
+                <span class="plan-price">₹179</span>
+                <span class="plan-duration">/ month</span>
+              </div>
+              <ul class="plan-features">
+                <li><i class="fa-solid fa-check"></i> Up to 6 Premium accounts</li>
+                <li><i class="fa-solid fa-check"></i> For family members living together</li>
+                <li><i class="fa-solid fa-check"></i> Block explicit content</li>
+                <li><i class="fa-solid fa-check"></i> Separate profiles for everyone</li>
+                <li><i class="fa-solid fa-check"></i> Spotify Kids app access</li>
+              </ul>
+              <button class="plan-btn" onclick="checkoutPremium('Family')">Get Started</button>
+            </div>
+
+            <!-- Plan Card 4 -->
+            <div class="plan-card">
+              <div class="plan-header">
+                <h3 class="plan-name">Premium Student</h3>
+                <span class="plan-price">₹59</span>
+                <span class="plan-duration">/ month</span>
+              </div>
+              <ul class="plan-features">
+                <li><i class="fa-solid fa-check"></i> 1 verified student account</li>
+                <li><i class="fa-solid fa-check"></i> Discount for college students</li>
+                <li><i class="fa-solid fa-check"></i> Listen ad-free anywhere</li>
+                <li><i class="fa-solid fa-check"></i> Download offline</li>
+                <li><i class="fa-solid fa-check"></i> Hulu ad-supported plan included</li>
+              </ul>
+              <button class="plan-btn" onclick="checkoutPremium('Student')">Get Started</button>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Mobile Nav -->
+  <nav class="mobile-nav-bar">
+    <a href="index.html" class="mobile-nav-item">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="search.html" class="mobile-nav-item">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Search</span>
+    </a>
+    <a href="library.html" class="mobile-nav-item">
+      <i class="fa-solid fa-lines-lean"></i>
+      <span>Your Library</span>
+    </a>
+  </nav>
+
+  <!-- Bottom Player -->
+  <footer class="player-bar">
+    <div class="player-left">
+      <img src="assets/albums/after_hours.jpg" class="player-album-art" id="player-art" alt="">
+      <div class="player-track-info">
+        <span class="player-track-title" id="player-title" onclick="viewAlbum('After Hours')">Blinding Lights</span>
+        <span class="player-track-artist" id="player-artist">The Weeknd</span>
+      </div>
+      <button class="player-like-btn" id="player-like"><i class="fa-regular fa-heart"></i></button>
+    </div>
+
+    <div class="player-center">
+      <div class="playback-controls">
+        <button class="btn-icon" id="player-shuffle"><i class="fa-solid fa-shuffle"></i></button>
+        <button class="btn-icon" id="player-prev"><i class="fa-solid fa-backward-step"></i></button>
+        <button class="btn-play-pause" id="player-play-pause"><i class="fa-solid fa-play"></i></button>
+        <button class="btn-icon btn-next-mobile" id="player-next"><i class="fa-solid fa-forward-step"></i></button>
+        <button class="btn-icon" id="player-repeat"><i class="fa-solid fa-repeat"></i></button>
+      </div>
+      <div class="progress-container">
+        <span class="time-stamp" id="player-current-time">0:00</span>
+        <div class="progress-bar-wrapper" id="player-seek-bar">
+          <div class="progress-bar-fill" id="player-progress-fill">
+            <div class="progress-handle"></div>
+          </div>
+        </div>
+        <span class="time-stamp" id="player-duration-total">3:20</span>
+      </div>
+    </div>
+
+    <div class="player-right">
+      <button class="btn-icon" onclick="showToast('Open lyrics panel')"><i class="fa-solid fa-microphone-lines"></i></button>
+      <button class="btn-icon" onclick="showToast('Show music queue')"><i class="fa-solid fa-list-ul"></i></button>
+      <button class="btn-icon" onclick="showToast('Connect to a device')"><i class="fa-solid fa-computer-speaker"></i></button>
+      <div class="volume-container">
+        <button class="btn-icon" id="player-volume-icon"><i class="fa-solid fa-volume-high"></i></button>
+        <div class="volume-bar-wrapper" id="player-volume-bar">
+          <div class="volume-bar-fill" id="player-volume-fill">
+            <div class="progress-handle"></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-icon" onclick="showToast('Toggle full screen player')"><i class="fa-solid fa-maximize"></i></button>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/navigation.js"></script>
+  <script>
+    window.checkoutPremium = function(planName) {
+      showToast(`Redirecting to payment for Spotify Premium ${planName}...`);
+      setTimeout(() => {
+        showToast(`Thank you! You are now subscribed to Spotify Premium ${planName}.`);
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
