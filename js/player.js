@@ -146,6 +146,10 @@ function setupAudioEvents() {
 
 // Global Play Function
 window.playTrack = function(trackId) {
+  if (localStorage.getItem("spotify_logged_in") !== "true") {
+    window.showLoginModal("login");
+    return;
+  }
   const targetIndex = SPOTIFY_DB.tracks.findIndex(t => t.id === trackId);
   if (targetIndex !== -1) {
     currentTrackIndex = targetIndex;

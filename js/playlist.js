@@ -59,7 +59,9 @@ document.addEventListener("DOMContentLoaded", () => {
       
       // Load only user liked tracks from localStorage
       tracks = SPOTIFY_DB.tracks.filter(t => localStorage.getItem(`liked_track_${t.id}`) === "true");
-      stats = `Praveen Kumar B &bull; ${tracks.length} songs`;
+      const currentUsername = localStorage.getItem("spotify_username") || "Praveen Kumar";
+      const displayName = currentUsername.charAt(0).toUpperCase() + currentUsername.slice(1);
+      stats = `${displayName} &bull; ${tracks.length} songs`;
     }
     
     // Set banner gradient
@@ -157,6 +159,10 @@ window.viewArtistByName = function(name) {
 }
 
 window.toggleLikeTrackRow = function(btn, id) {
+  if (localStorage.getItem("spotify_logged_in") !== "true") {
+    window.showLoginModal("login");
+    return;
+  }
   const itemKey = `liked_track_${id}`;
   const isCurrentlyLiked = localStorage.getItem(itemKey) === "true";
   

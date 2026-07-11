@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Spotify UI Clone - User Profile.">
+  <title>Spotify - Profile</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/player.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .profile-hero {
+      display: flex;
+      align-items: flex-end;
+      gap: 32px;
+      padding: 40px 32px 24px 32px;
+      background: linear-gradient(to bottom, #333333 0%, rgba(18, 18, 18, 0.4) 100%);
+      margin-top: 16px;
+    }
+    
+    .profile-avatar-container {
+      position: relative;
+      width: 192px;
+      height: 192px;
+      border-radius: 50%;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      overflow: hidden;
+    }
+    
+    .profile-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: filter 0.3s ease;
+    }
+    
+    .profile-avatar-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .profile-avatar-container:hover .profile-avatar-overlay {
+      opacity: 1;
+    }
+    
+    .profile-avatar-container:hover .profile-avatar-img {
+      filter: brightness(0.7);
+    }
+    
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+    }
+    
+    .profile-label {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    .profile-name-display {
+      font-size: 72px;
+      font-weight: 800;
+      letter-spacing: -3px;
+      margin: 4px 0 12px 0;
+      line-height: 1;
+      cursor: pointer;
+    }
+    
+    .profile-name-display:hover {
+      text-decoration: underline;
+    }
+    
+    .profile-stats {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    
+    /* Edit Profile Modal Styles */
+    .edit-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .edit-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .edit-modal-card {
+      background-color: #282828;
+      border-radius: 8px;
+      width: 520px;
+      max-width: 90%;
+      padding: 24px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+      position: relative;
+      transform: scale(0.95);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .edit-modal-overlay.active .edit-modal-card {
+      transform: scale(1);
+    }
+    
+    .edit-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    
+    .edit-modal-title {
+      font-size: 22px;
+      font-weight: 700;
+    }
+    
+    .edit-modal-close {
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    
+    .edit-modal-close:hover {
+      color: var(--text-main);
+    }
+    
+    .edit-form-content {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    
+    .edit-avatar-selector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 160px;
+    }
+    
+    .edit-avatar-preview {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    .edit-avatar-select-btn {
+      background-color: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+    
+    .edit-avatar-select-btn:hover {
+      border-color: #ffffff;
+      background-color: rgba(255,255,255,0.05);
+    }
+    
+    .edit-inputs {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: left;
+    }
+    
+    .edit-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .edit-input-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    
+    .edit-input-field {
+      height: 40px;
+      background-color: #3e3e3e;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      padding: 0 12px;
+      font-size: 14px;
+      color: #ffffff;
+      font-weight: 500;
+      width: 100%;
+    }
+    
+    .edit-input-field:focus {
+      background-color: #4e4e4e;
+      border-color: rgba(255,255,255,0.2);
+    }
+    
+    .edit-save-btn {
+      align-self: flex-end;
+      background-color: var(--spotify-white);
+      color: var(--spotify-black);
+      font-weight: 700;
+      padding: 12px 32px;
+      border-radius: 500px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+      margin-top: 16px;
+    }
+    
+    .edit-save-btn:hover {
+      background-color: #f6f6f6;
+      transform: scale(1.04);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- ==========================================
+         1. Left Sidebar Navigation Panel
+         ========================================== -->
+    <aside class="sidebar">
+      
+      <div class="sidebar-panel">
+        <a href="index.html" class="sidebar-logo">
+          <img src="assets/images/logo.png" alt="Spotify Logo">
+          <span>Spotify</span>
+        </a>
+        <ul class="sidebar-nav-list">
+          <li class="sidebar-nav-item">
+            <a href="index.html">
+              <i class="fa-solid fa-house"></i>
+              <span>Home</span>
+            </a>
+          </li>
+          <li class="sidebar-nav-item">
+            <a href="search.html">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span>Search</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-panel library-panel">
+        <div class="library-header">
+          <div class="library-title" onclick="window.location.href='library.html'">
+            <i class="fa-solid fa-lines-lean"></i>
+            <span>Your Library</span>
+          </div>
+          <button class="control-btn" style="width:24px; height:24px;" onclick="showToast('Create Playlist clicked')">
+            <i class="fa-solid fa-plus" style="font-size:12px;"></i>
+          </button>
+        </div>
+        <div class="library-scroll" id="library-playlists">
+          <!-- Library items loaded dynamically -->
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ==========================================
+         2. Main Application View Section
+         ========================================== -->
+    <main class="main-view fade-in-up">
+      
+      <!-- Top Sticky Navigation Bar -->
+      <header class="top-bar">
+        <div class="nav-controls">
+          <button class="control-btn" id="nav-back"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="control-btn disabled" id="nav-forward"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <div style="display:flex; gap:16px; align-items:center;">
+          <button class="badge badge-dark" onclick="window.location.href='premium.html'">Explore Premium</button>
+          
+          <!-- User Profile Dropdown -->
+          <div class="user-menu" id="user-menu-trigger">
+            <img src="assets/artists/taylor_swift.jpg" class="user-avatar" id="header-avatar" alt="Avatar">
+            <span class="user-name">Praveen Kumar</span>
+            <i class="fa-solid fa-caret-down" style="font-size:10px;"></i>
+            
+            <div class="me-dropdown" id="user-dropdown-menu" style="position: absolute; top: 36px; right: 0; width: 180px; background-color: var(--spotify-card); border-radius: 4px; display: none; flex-direction: column; z-index: 1000; padding: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.5);">
+              <a href="profile.html" style="padding: 10px 12px; font-size:13px; font-weight:600; border-radius:3px;" class="sidebar-nav-item">Profile</a>
+              <a href="settings.html" style="padding: 10px 12px; font-size:13px; font-weight:600; border-radius:3px;" class="sidebar-nav-item">Settings</a>
+              <hr style="border:none; border-bottom:1px solid rgba(255,255,255,0.05); margin:4px 0;">
+              <a href="#" style="padding: 10px 12px; font-size:13px; font-weight:600; border-radius:3px;" class="sidebar-nav-item">Log out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Profile Content -->
+      <div style="flex-grow:1; overflow-y:auto; padding-bottom:48px;">
+        
+        <!-- Large Profile Hero -->
+        <div class="profile-hero" id="profile-hero-section">
+          <div class="profile-avatar-container" onclick="openEditProfile()">
+            <img src="assets/artists/taylor_swift.jpg" class="profile-avatar-img" id="profile-hero-avatar" alt="User Avatar">
+            <div class="profile-avatar-overlay">
+              <i class="fa-solid fa-pen" style="font-size: 24px;"></i>
+              <span>Choose photo</span>
+            </div>
+          </div>
+          
+          <div class="profile-info">
+            <span class="profile-label">Profile</span>
+            <h1 class="profile-name-display" id="profile-hero-name" onclick="openEditProfile()">Praveen Kumar</h1>
+            <div class="profile-stats">
+              <span id="profile-playlists-count">3 Public Playlists</span> &bull; 
+              <span>12 Followers</span> &bull; 
+              <span>24 Following</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Public Playlists Section -->
+        <section class="section-container" style="padding-top: 32px;">
+          <div class="section-header">
+            <h2 class="section-title">Public Playlists</h2>
+          </div>
+          
+          <div class="cards-grid">
+            
+            <div class="music-card" onclick="window.location.href='library.html'">
+              <div class="card-img-wrapper" style="background: linear-gradient(135deg, #450af5 0%, #8e8ee5 100%); display:flex; align-items:center; justify-content:center;">
+                <i class="fa-solid fa-heart" style="font-size: 48px; color:#ffffff;"></i>
+              </div>
+              <span class="card-title">Liked Songs</span>
+              <p class="card-desc">Your personal collection of favorite tracks.</p>
+            </div>
+            
+            <div class="music-card" onclick="showToast('Browsing My Chill Mix')">
+              <div class="card-img-wrapper">
+                <img src="assets/playlists/lofi_beats.jpg" class="card-img" alt="">
+                <button class="card-play-btn" onclick="event.stopPropagation(); playTrack(6)">
+                  <i class="fa-solid fa-play"></i>
+                </button>
+              </div>
+              <span class="card-title">My Chill Mix</span>
+              <p class="card-desc">Lofi beats and acoustic hits created by you.</p>
+            </div>
+
+            <div class="music-card" onclick="showToast('Browsing Work & Focus')">
+              <div class="card-img-wrapper">
+                <img src="assets/playlists/peaceful_piano.jpg" class="card-img" alt="">
+                <button class="card-play-btn" onclick="event.stopPropagation(); playTrack(5)">
+                  <i class="fa-solid fa-play"></i>
+                </button>
+              </div>
+              <span class="card-title">Work & Focus</span>
+              <p class="card-desc">Classical music and ambient sounds.</p>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav-bar">
+    <a href="index.html" class="mobile-nav-item">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </a>
+    <a href="search.html" class="mobile-nav-item">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Search</span>
+    </a>
+    <a href="library.html" class="mobile-nav-item">
+      <i class="fa-solid fa-lines-lean"></i>
+      <span>Your Library</span>
+    </a>
+  </nav>
+
+  <!-- Bottom Player Control Bar -->
+  <footer class="player-bar">
+    <div class="player-left">
+      <img src="assets/albums/after_hours.jpg" class="player-album-art" id="player-art" alt="">
+      <div class="player-track-info">
+        <span class="player-track-title" id="player-title" onclick="viewAlbum('After Hours')">Blinding Lights</span>
+        <span class="player-track-artist" id="player-artist">The Weeknd</span>
+      </div>
+      <button class="player-like-btn" id="player-like"><i class="fa-regular fa-heart"></i></button>
+    </div>
+
+    <div class="player-center">
+      <div class="playback-controls">
+        <button class="btn-icon" id="player-shuffle"><i class="fa-solid fa-shuffle"></i></button>
+        <button class="btn-icon" id="player-prev"><i class="fa-solid fa-backward-step"></i></button>
+        <button class="btn-play-pause" id="player-play-pause"><i class="fa-solid fa-play"></i></button>
+        <button class="btn-icon btn-next-mobile" id="player-next"><i class="fa-solid fa-forward-step"></i></button>
+        <button class="btn-icon" id="player-repeat"><i class="fa-solid fa-repeat"></i></button>
+      </div>
+      <div class="progress-container">
+        <span class="time-stamp" id="player-current-time">0:00</span>
+        <div class="progress-bar-wrapper" id="player-seek-bar">
+          <div class="progress-bar-fill" id="player-progress-fill">
+            <div class="progress-handle"></div>
+          </div>
+        </div>
+        <span class="time-stamp" id="player-duration-total">3:20</span>
+      </div>
+    </div>
+
+    <div class="player-right">
+      <button class="btn-icon" onclick="showToast('Open lyrics panel')"><i class="fa-solid fa-microphone-lines"></i></button>
+      <button class="btn-icon" onclick="showToast('Show music queue')"><i class="fa-solid fa-list-ul"></i></button>
+      <button class="btn-icon" onclick="showToast('Connect to a device')"><i class="fa-solid fa-computer-speaker"></i></button>
+      <div class="volume-container">
+        <button class="btn-icon" id="player-volume-icon"><i class="fa-solid fa-volume-high"></i></button>
+        <div class="volume-bar-wrapper" id="player-volume-bar">
+          <div class="volume-bar-fill" id="player-volume-fill">
+            <div class="progress-handle"></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-icon" onclick="showToast('Toggle full screen player')"><i class="fa-solid fa-maximize"></i></button>
+    </div>
+  </footer>
+
+  <!-- ==========================================
+       3. Edit Profile Modal
+       ========================================== -->
+  <div class="edit-modal-overlay" id="edit-profile-modal">
+    <div class="edit-modal-card">
+      <div class="edit-modal-header">
+        <h2 class="edit-modal-title">Profile details</h2>
+        <button class="edit-modal-close" onclick="closeEditProfile()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <div class="edit-form-content">
+        <div class="edit-avatar-selector">
+          <img src="assets/artists/taylor_swift.jpg" class="edit-avatar-preview" id="edit-avatar-preview-img" alt="Avatar Preview">
+          <button class="edit-avatar-select-btn" onclick="rotateAvatar()">Change Avatar</button>
+        </div>
+        
+        <div class="edit-inputs">
+          <div class="edit-input-group">
+            <label class="edit-input-label" for="edit-display-name">Name</label>
+            <input type="text" id="edit-display-name" class="edit-input-field" placeholder="Display Name" required>
+          </div>
+          
+          <button class="edit-save-btn" onclick="saveProfileChanges()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Imports -->
+  <script src="js/app.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/navigation.js"></script>
+  <script>
+    // List of pre-installed avatars for rotating
+    const AVATAR_OPTIONS = [
+      "assets/artists/taylor_swift.jpg",
+      "assets/artists/the_weeknd.jpg",
+      "assets/artists/billie_eilish.jpg",
+      "assets/artists/drake.jpg",
+      "assets/artists/ed_sheeran.jpg"
+    ];
+    let currentAvatarIdx = 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Sync initial profile values
+      syncProfileInfo();
+    });
+
+    function syncProfileInfo() {
+      const username = localStorage.getItem("spotify_username") || "Praveen Kumar";
+      const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+      
+      const avatarUrl = localStorage.getItem("spotify_user_avatar") || "assets/artists/taylor_swift.jpg";
+      
+      document.getElementById("profile-hero-name").textContent = displayName;
+      document.getElementById("profile-hero-avatar").src = avatarUrl;
+      document.getElementById("edit-avatar-preview-img").src = avatarUrl;
+      document.getElementById("edit-display-name").value = displayName;
+      
+      // Update header avatar
+      const headerAvatar = document.getElementById("header-avatar");
+      if (headerAvatar) headerAvatar.src = avatarUrl;
+      
+      // Update index of current avatar
+      const idx = AVATAR_OPTIONS.indexOf(avatarUrl);
+      if (idx !== -1) currentAvatarIdx = idx;
+    }
+
+    window.openEditProfile = function() {
+      const modal = document.getElementById("edit-profile-modal");
+      if (modal) {
+        syncProfileInfo();
+        modal.classList.add("active");
+      }
+    }
+
+    window.closeEditProfile = function() {
+      const modal = document.getElementById("edit-profile-modal");
+      if (modal) {
+        modal.classList.remove("active");
+      }
+    }
+
+    window.rotateAvatar = function() {
+      currentAvatarIdx = (currentAvatarIdx + 1) % AVATAR_OPTIONS.length;
+      const nextAvatar = AVATAR_OPTIONS[currentAvatarIdx];
+      document.getElementById("edit-avatar-preview-img").src = nextAvatar;
+    }
+
+    window.saveProfileChanges = function() {
+      const newName = document.getElementById("edit-display-name").value.trim();
+      const newAvatar = document.getElementById("edit-avatar-preview-img").src;
+      
+      if (!newName) {
+        showToast("Name cannot be empty!");
+        return;
+      }
+      
+      // Save to localStorage
+      localStorage.setItem("spotify_username", newName.toLowerCase());
+      
+      // Extract relative path for avatar
+      let relativeAvatar = newAvatar;
+      if (newAvatar.includes("assets/")) {
+        relativeAvatar = "assets/" + newAvatar.split("assets/")[1];
+      }
+      localStorage.setItem("spotify_user_avatar", relativeAvatar);
+      
+      // Sync immediately
+      syncProfileInfo();
+      
+      // Update globally loaded header details via applyLoginState if defined
+      if (typeof applyLoginState === "function") {
+        applyLoginState();
+      }
+      
+      closeEditProfile();
+      showToast("Profile updated successfully!");
+    }
+  </script>
+</body>
+</html>
